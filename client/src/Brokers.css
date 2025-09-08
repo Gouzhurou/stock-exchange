@@ -1,0 +1,40 @@
+.add-block {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+}
+@media (max-width: 700px) {
+    .add-block {
+        grid-template-columns: 1fr;
+    }
+}
+.add-input {
+    background-image: url('../public/plus.png');
+    background-repeat: no-repeat;
+    background-position: 16px center;
+    background-size: 16px 16px;
+    padding-left: 48px;
+}
+.add-input:focus {
+    outline: none;
+}
+.checkbox {
+    width: 16px;
+    height: 16px;
+    background-color: white;
+    border: 1px solid #FFD500;
+}
+.checkbox-selected {
+    background-image: url('../public/selected.png');
+    background-repeat: no-repeat;
+    background-size: 16px 16px;
+}
+#delete-button {
+    background-image: url('../public/trash.png');
+    background-repeat: no-repeat;
+    background-size: 24px 24px;
+    width: 24px;
+    height: 24px;
+    border: none;
+    background-color: #f6f6f6;
+}
