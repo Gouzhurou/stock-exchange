@@ -9,11 +9,11 @@
     }
 }
 .add-input {
-    background-image: url('../public/plus.png');
+    background-image: url('../../public/plus.png');
     background-repeat: no-repeat;
     background-position: 16px center;
     background-size: 16px 16px;
-    padding-left: 48px;
+    padding-left: 48px !important;
 }
 .add-input:focus {
     outline: none;
@@ -25,12 +25,12 @@
     border: 1px solid #FFD500;
 }
 .checkbox-selected {
-    background-image: url('../public/selected.png');
+    background-image: url('../../public/selected.png');
     background-repeat: no-repeat;
     background-size: 16px 16px;
 }
 #delete-button {
-    background-image: url('../public/trash.png');
+    background-image: url('../../public/trash.png');
     background-repeat: no-repeat;
     background-size: 24px 24px;
     width: 24px;

@@ -1,5 +1,4 @@
-import "../App.css"
-import "../Brokers.css"
+import "../css/Brokers.css"
 import React, { useState, useEffect } from "react";
 import Broker from "./Broker";
 
@@ -14,10 +13,10 @@ function Brokers() {
     }, []);
 
     const fetchBrokers = async () => {
-        console.log("fetchBrokers");
         try {
             setIsLoading(true);
-            const response = await fetch('http://localhost:3001/brokers');
+            const { hostname, protocol } = window.location;
+            const response = await fetch(`${protocol}//${hostname}:3001/brokers`);
 
             const data = await response.json();
             setBrokers(data.brokers || []);
@@ -41,7 +40,8 @@ function Brokers() {
         };
 
         try {
-            await fetch('http://localhost:3001/brokers', {
+            const {hostname, protocol} = window.location;
+            await fetch(`${protocol}//${hostname}:3001/brokers`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -57,9 +57,9 @@ function Brokers() {
     };
 
     const updateBroker = async (updatedBroker) => {
-        console.log("updatedBroker", updatedBroker);
         try {
-            await fetch(`http://localhost:3001/brokers/${updatedBroker.id}`, {
+            const {hostname, protocol} = window.location;
+            await fetch(`${protocol}//${hostname}:3001/brokers/${updatedBroker.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -75,7 +75,8 @@ function Brokers() {
 
     const deleteBrokers = async () => {
         try {
-            await fetch('http://localhost:3001/brokers', {
+            const {hostname, protocol} = window.location;
+            await fetch(`${protocol}//${hostname}:3001/brokers`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -99,11 +100,12 @@ function Brokers() {
     return (
         <div className="main center">
             <div className="add-block">
-                <input className="input add-input"
-                       type="text"
-                       placeholder="Broker"
-                       value={name}
-                       onChange={onChange}
+                <input
+                    className="input add-input"
+                    type="text"
+                    placeholder="Broker"
+                    value={name}
+                    onChange={onChange}
                 />
                 <button className="button" onClick={addBroker}>Добавить</button>
             </div>

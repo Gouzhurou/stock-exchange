@@ -1,12 +1,19 @@
-import "../Broker.css"
+import "../css/ListItem.css"
 import React from "react";
 
 class Broker extends React.Component {
     constructor(props) {
         super(props);
 
+        this.state = {
+            balance: ""
+        }
+
         this.handleEditClick = this.handleEditClick.bind(this);
-        this.handleBrokerClick = this.handleBrokerClick.bind(this);
+        this.handleSelectedClick = this.handleSelectedClick.bind(this);
+        this.handleBalanceClick = this.handleBalanceClick.bind(this);
+        this.onChangeBalance = this.onChangeBalance.bind(this);
+        this.handleNegativeBalanceClick = this.handleNegativeBalanceClick.bind(this);
     }
 
     handleEditClick() {
@@ -17,12 +24,36 @@ class Broker extends React.Component {
         this.props.onUpdate(newBroker);
     }
 
-    handleBrokerClick() {
+    handleSelectedClick() {
         const newBroker = {
             ...this.props.broker,
             selected: !this.props.broker?.selected
         };
         this.props.onUpdate(newBroker);
+    }
+
+    onChangeBalance(e) {
+        this.setState({balance: e.target.value});
+    }
+
+    handleBalanceClick() {
+        const newBalance = this.props.broker?.balance + parseInt(this.state.balance);
+        const newBroker = {
+            ...this.props.broker,
+            balance: newBalance
+        };
+        this.props.onUpdate(newBroker);
+        this.setState({balance: ""});
+    }
+
+    handleNegativeBalanceClick() {
+        const newBalance = this.props.broker?.balance + parseInt(this.state.balance) * (-1);
+        const newBroker = {
+            ...this.props.broker,
+            balance: newBalance
+        };
+        this.props.onUpdate(newBroker);
+        this.setState({balance: ""});
     }
 
     render() {
@@ -33,7 +64,7 @@ class Broker extends React.Component {
                 <div className="row list-item__top">
                     <div
                         className="row list-item-intro"
-                        onClick={this.handleBrokerClick}
+                        onClick={this.handleSelectedClick}
                     >
                         {
                             broker.selected ? (
@@ -42,8 +73,8 @@ class Broker extends React.Component {
                             <div className="checkbox"/>
                             )}
                         <div className="list-item-content">
-                            <p className="list-item-content__top">{broker.name}</p>
-                            <p className="list-item-content__bottom price">{broker.balance}</p>
+                            <p className="list-item__heading">{broker.name}</p>
+                            <p className="list-item__subheading price">{broker.balance}</p>
                         </div>
                     </div>
 
@@ -53,9 +84,15 @@ class Broker extends React.Component {
                 {
                     broker.isEditing && (
                         <div className="list-item__bottom">
-                            <button className="button">Отжать</button>
-                            <input className="input" type="number" placeholder="Price"/>
-                            <button className="button">Добавить</button>
+                            <button className="button" onClick={this.handleNegativeBalanceClick}>Отжать</button>
+                            <input
+                                className="input"
+                                type="text"
+                                placeholder="Balance"
+                                value={this.state.balance}
+                                onChange={this.onChangeBalance}
+                            />
+                            <button className="button" onClick={this.handleBalanceClick}>Добавить</button>
                         </div>
                 )}
 

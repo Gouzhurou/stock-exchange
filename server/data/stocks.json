@@ -1,0 +1,36 @@
+{
+  "stocks": [
+    {
+      "name": "Apple, Inc.",
+      "id": "AAPL"
+    },
+    {
+      "name": "Starbucks, Inc.",
+      "id": "SBUX"
+    },
+    {
+      "name": "Microsoft, Inc.",
+      "id": "MSFT"
+    },
+    {
+      "name": "Cisco Systems, Inc.",
+      "id": "CSCO"
+    },
+    {
+      "name": "QUALCOMM Incorporated",
+      "id": "QCOM"
+    },
+    {
+      "name": "Amazon.com, Inc.",
+      "id": "AMZN"
+    },
+    {
+      "name": "Tesla, Inc.",
+      "id": "TSLA"
+    },
+    {
+      "name": "Advanced Micro Devices, Inc.",
+      "id": "AMD"
+    }
+  ]
+}

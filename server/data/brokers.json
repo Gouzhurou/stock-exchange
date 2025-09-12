@@ -1,0 +1,60 @@
+{
+  "brokers": [
+    {
+      "id": 3,
+      "name": "Алексей Козлов",
+      "balance": 213000,
+      "selected": false,
+      "isEditing": false
+    },
+    {
+      "id": 4,
+      "name": "Елена Новикова",
+      "balance": 54320,
+      "selected": false,
+      "isEditing": false
+    },
+    {
+      "id": 5,
+      "name": "Дмитрий Волков",
+      "balance": 98765,
+      "selected": false,
+      "isEditing": false
+    },
+    {
+      "id": 6,
+      "name": "Ольга Морозова",
+      "balance": 156789,
+      "selected": false,
+      "isEditing": false
+    },
+    {
+      "id": 7,
+      "name": "Сергей Орлов",
+      "balance": 76543,
+      "selected": false,
+      "isEditing": false
+    },
+    {
+      "id": 8,
+      "name": "Анна Лебедева",
+      "balance": 43210,
+      "selected": false,
+      "isEditing": false
+    },
+    {
+      "id": 9,
+      "name": "Павел Соколов",
+      "balance": 111111,
+      "selected": false,
+      "isEditing": false
+    },
+    {
+      "id": 10,
+      "name": "Наталья Зайцева",
+      "balance": 222222,
+      "selected": false,
+      "isEditing": false
+    }
+  ]
+}
