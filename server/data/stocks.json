@@ -2,35 +2,63 @@
   "stocks": [
     {
       "name": "Apple, Inc.",
-      "id": "AAPL"
-    },
-    {
-      "name": "Starbucks, Inc.",
-      "id": "SBUX"
-    },
-    {
-      "name": "Microsoft, Inc.",
-      "id": "MSFT"
-    },
-    {
-      "name": "Cisco Systems, Inc.",
-      "id": "CSCO"
-    },
-    {
-      "name": "QUALCOMM Incorporated",
-      "id": "QCOM"
-    },
-    {
-      "name": "Amazon.com, Inc.",
-      "id": "AMZN"
-    },
-    {
-      "name": "Tesla, Inc.",
-      "id": "TSLA"
+      "id": "AAPL",
+      "selected": true,
+      "count": 1
     },
     {
       "name": "Advanced Micro Devices, Inc.",
-      "id": "AMD"
+      "id": "AMD",
+      "selected": true,
+      "count": 1
+    },
+    {
+      "name": "Amazon.com, Inc.",
+      "id": "AMZN",
+      "selected": false,
+      "count": 1
+    },
+    {
+      "name": "Cisco Systems, Inc.",
+      "id": "CSCO",
+      "selected": false,
+      "count": 1
+    },
+    {
+      "name": "Meta Platforms, Inc.",
+      "id": "META",
+      "selected": false,
+      "count": 1
+    },
+    {
+      "name": "Microsoft, Inc.",
+      "id": "MSFT",
+      "selected": false,
+      "count": 1
+    },
+    {
+      "name": "Netflix, Inc.",
+      "id": "NFLX",
+      "selected": false,
+      "count": 1
+    },
+    {
+      "name": "QUALCOMM Incorporated",
+      "id": "QCOM",
+      "selected": false,
+      "count": 1
+    },
+    {
+      "name": "Starbucks, Inc.",
+      "id": "SBUX",
+      "selected": false,
+      "count": 1
+    },
+    {
+      "name": "Tesla, Inc.",
+      "id": "TSLA",
+      "selected": false,
+      "count": 1
     }
   ]
 }
