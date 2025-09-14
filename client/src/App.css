@@ -62,15 +62,6 @@ body {
 .main {
     padding-top: 64px;
 }
-.input {
-    padding: 16px;
-    font-size: 16px;
-    color: #616161;
-    background-color: #f6f6f6;
-    border: none;
-    border-radius: 12px;
-    /*width: 100%;*/
-}
 .button {
     border: none;
     border-radius: 12px;
@@ -82,12 +73,6 @@ body {
 .button:hover {
     background-color: #F0C700;
 }
-.block {
-    background-color: #f6f6f6;
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
-    margin-top: 24px;
-}
 .buttons {
     padding: 16px;
 }
@@ -98,4 +83,11 @@ body {
 }
 .price::after {
     content: " $";
+}
+.green-text {
+    color: #20AC00;
+}
+.round-img {
+    border-radius: 50%;
+    object-fit: cover;
 }

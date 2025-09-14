@@ -1,4 +1,5 @@
 import "../css/Brokers.css"
+import '../css/Input.css'
 import React, { useState, useEffect } from "react";
 import Broker from "./Broker";
 
@@ -67,7 +68,11 @@ function Brokers() {
                 body: JSON.stringify(updatedBroker),
             });
 
-            await fetchBrokers();
+            setBrokers(prevBrokers =>
+                prevBrokers.map(broker =>
+                    broker.id === updatedBroker.id ? updatedBroker : broker
+                )
+            );
         } catch (error) {
             console.error('Error updating broker:', error);
         }

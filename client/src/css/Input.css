@@ -1,0 +1,26 @@
+.input-block {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.input-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+}
+.input {
+    padding: 16px;
+    font-size: 16px;
+    color: #616161;
+    background-color: #f6f6f6;
+    border: none;
+    border-radius: 12px;
+}
+.input:focus {
+    outline: none;
+}
+.input-text {
+    font-size: 20px;
+    font-weight: 500;
+}

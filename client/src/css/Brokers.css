@@ -15,9 +15,6 @@
     background-size: 16px 16px;
     padding-left: 48px !important;
 }
-.add-input:focus {
-    outline: none;
-}
 .checkbox {
     width: 16px;
     height: 16px;

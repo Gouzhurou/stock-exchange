@@ -66,12 +66,7 @@ class Broker extends React.Component {
                         className="row list-item-intro"
                         onClick={this.handleSelectedClick}
                     >
-                        {
-                            broker.selected ? (
-                                <div className="checkbox checkbox-selected"/>
-                        ) : (
-                            <div className="checkbox"/>
-                            )}
+                        <div className={`checkbox ${broker.selected ? 'checkbox-selected' : ''}`} />
                         <div className="list-item-content">
                             <p className="list-item__heading">{broker.name}</p>
                             <p className="list-item__subheading price">{broker.balance}</p>

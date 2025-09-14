@@ -46,6 +46,9 @@ class Stock extends React.Component {
                     <div className="row list-item-intro">
                         <img
                             src={`${process.env.PUBLIC_URL}/${stock.id}.jpg`}
+                            onError={(e) => {
+                                e.target.src = `${process.env.PUBLIC_URL}/question.jpg`;
+                            }}
                             className="round-img stocks__stock__img"
                             alt="company logo"
                         />

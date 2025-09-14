@@ -1,4 +1,4 @@
-import {Controller, Get, Param, Put} from "@nestjs/common";
+import {Body, Controller, Get, Param, Put} from "@nestjs/common";
 import {StocksService} from "./stocks.service";
 
 @Controller('stocks')
@@ -13,5 +13,10 @@ export class StocksController {
     @Get(':id')
     getStock(@Param('id') id: string) {
         return this.stocksService.getStock(id);
+    }
+
+    @Put(':id')
+    updateStock(@Param('id') id: string) {
+        return this.stocksService.updateStock(id);
     }
 }
