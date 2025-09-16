@@ -7,6 +7,7 @@ class StockListItem extends React.Component {
 
         this.state = {
             data: [],
+            prevPrice: null,
             currentPrice: null,
             currentDateIndex: -1
         }
@@ -127,6 +128,7 @@ class StockListItem extends React.Component {
                     // console.log(`${stock.id} ${data[nextIndex].date}`);
                     const nextPrice = data[nextIndex].open;
                     return {
+                        prevPrice: this.state.currentPrice,
                         currentPrice: nextPrice,
                         currentDateIndex: nextIndex
                     };
@@ -151,30 +153,73 @@ class StockListItem extends React.Component {
 
     render() {
         const { stock, isSimulationRunning } = this.props;
-        const { currentPrice } = this.state;
+        const { prevPrice, currentPrice } = this.state;
 
         return (
             <div className="settings__list-item">
+                <div className={`checkbox ${stock.selected ? 'checkbox-selected' : ''}`} />
+
                 <div
-                    className="row list-item-intro"
+                    className="settings__content"
                     onClick={this.handleSelectedClick}
                 >
-                    <div className={`checkbox ${stock.selected ? 'checkbox-selected' : ''}`} />
                     <div className="list-item-content">
                         <p className="list-item__heading">{stock.name}</p>
                         <p className="list-item__subheading">{stock.id}</p>
                     </div>
-                </div>
 
-                <div className="list-item-content">
-                    <p className={
-                        `list-item__heading`}>
-                        {isSimulationRunning && stock.selected && currentPrice !== null
-                            ? `$${currentPrice}`
-                            : ""
-                        }
-                    </p>
-                    <p className="list-item__subheading">1 лот = {stock.count} акция</p>
+                    <div className="list-item-content right-side">
+                        <p className=
+                               {`
+                               list-item__heading 
+                               ${isSimulationRunning && stock.selected && currentPrice !== null ? 'price' : ''}
+                               `}
+                        >
+                            {isSimulationRunning && stock.selected && currentPrice !== null
+                                ? `${currentPrice}`
+                                : ""
+                            }
+                        </p>
+                        <p className="list-item__subheading">1 лот = {stock.count} акция</p>
+                    </div>
+
+                    <div className="list-item-content right-side">
+                        <p className=
+                               {`
+                               list-item__heading
+                               ${isSimulationRunning && stock.selected && currentPrice !== null ? 'price' : ''}
+                               ${isSimulationRunning && stock.selected && currentPrice !== null && prevPrice !== null
+                                   ? (currentPrice - prevPrice) > 0 ? 'green-text'
+                                       : (currentPrice - prevPrice) < 0 ? 'red-text'
+                                           : ''
+                                   : ''
+                               }
+                               `}
+                        >
+                            {isSimulationRunning && stock.selected && currentPrice !== null
+                                ? `${(currentPrice - prevPrice).toFixed(2)}`
+                                : ""
+                            }
+                        </p>
+                        <p className=
+                               {`
+                               list-item__heading
+                               ${isSimulationRunning && stock.selected && currentPrice !== null ? 'percent' : ''}
+                               ${isSimulationRunning && stock.selected && currentPrice !== null && prevPrice !== null
+                                   ? (currentPrice - prevPrice) > 0 ? 'green-text'
+                                       : (currentPrice - prevPrice) < 0 ? 'red-text'
+                                           : ''
+                                   : ''
+                               }
+                               `}
+                        >
+                            {isSimulationRunning && stock.selected && currentPrice !== null
+                                ? (currentPrice - prevPrice) > 0 ? `${(100 - prevPrice * 100 / currentPrice).toFixed(2)}`
+                                    : `${(100 - currentPrice * 100 / prevPrice).toFixed(2)}`
+                                : ""
+                            }
+                        </p>
+                    </div>
                 </div>
             </div>
         )

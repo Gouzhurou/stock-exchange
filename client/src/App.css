@@ -15,8 +15,8 @@ body {
 }
 @media (max-width: 500px) {
     .header {
-        flex-wrap: wrap;
-        justify-content: center;
+        flex-direction: column;
+        align-items: center;
     }
     .link {
         margin-bottom: 24px;
@@ -24,6 +24,11 @@ body {
 }
 .center {
     padding: 0 16%;
+}
+@media (max-width: 500px) {
+    .center {
+        padding: 0 2%;
+    }
 }
 .row {
     display: flex;
@@ -84,8 +89,14 @@ body {
 .price::after {
     content: " $";
 }
+.percent::after {
+    content: " %";
+}
 .green-text {
     color: #20AC00;
+}
+.red-text {
+    color: #ac0000;
 }
 .round-img {
     border-radius: 50%;

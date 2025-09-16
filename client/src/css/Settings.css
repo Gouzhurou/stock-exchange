@@ -33,7 +33,7 @@
 
 .headings {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     padding: 16px;
     padding-top: 32px;
     padding-left: 48px;
@@ -49,8 +49,20 @@
 }
 
 .settings__list-item {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    background-color: white;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
     padding: 24px 16px;
+    background-color: white;
+}
+
+.settings__content {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.right-side {
+    align-items: flex-end;
 }

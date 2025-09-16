@@ -39,15 +39,16 @@ class Stock extends React.Component {
     render() {
         const { stock } = this.props;
         const { historicalData, loading, error } = this.state;
+        const {hostname, protocol} = window.location;
 
         return (
             <div className="list-item">
                 <div className="row list-item__top">
                     <div className="row list-item-intro">
                         <img
-                            src={`${process.env.PUBLIC_URL}/${stock.id}.jpg`}
+                            src={`${protocol}//${hostname}:3001/images/${stock.id}.jpg`}
                             onError={(e) => {
-                                e.target.src = `${process.env.PUBLIC_URL}/question.jpg`;
+                                e.target.src = `${protocol}//${hostname}:3001/images/question.jpg`;
                             }}
                             className="round-img stocks__stock__img"
                             alt="company logo"

@@ -33,6 +33,10 @@ function Settings() {
     };
 
     const updateStock = async (id) => {
+        if (isSimulationRunning) {
+            return;
+        }
+
         try {
             const {hostname, protocol} = window.location;
             await fetch(`${protocol}//${hostname}:3001/stocks/${id}`, {

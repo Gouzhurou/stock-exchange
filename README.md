@@ -38,3 +38,10 @@
 ## Макет
 
 Макет интерфейса можно посмотреть [тут](https://www.figma.com/design/3ANyhLdQEMX34S0NA9Mkei/Stock-Exchange?node-id=0-1&p=f&t=ou3L8eD1Sz0H7QyS-0)
+
+---
+
+## Стек
+
+- React
+- NestJS
