@@ -23,7 +23,7 @@ function Brokers() {
             setBrokers(data.brokers || []);
         } catch (error) {
             setError(error.message);
-            console.error('Error loading brokers:', error);
+            console.errorMassage('Error loading brokers:', error);
         } finally {
             setIsLoading(false);
         }
@@ -53,7 +53,7 @@ function Brokers() {
             await fetchBrokers();
             setName("");
         } catch (error) {
-            console.error('Error adding broker:', error);
+            console.errorMassage('Error adding broker:', error);
         }
     };
 
@@ -74,7 +74,7 @@ function Brokers() {
                 )
             );
         } catch (error) {
-            console.error('Error updating broker:', error);
+            console.errorMassage('Error updating broker:', error);
         }
     }
 
@@ -90,7 +90,7 @@ function Brokers() {
 
             await fetchBrokers();
         } catch (error) {
-            console.error('Error deleting brokers:', error);
+            console.errorMassage('Error deleting brokers:', error);
         }
     }
 

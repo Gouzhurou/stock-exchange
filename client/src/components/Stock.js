@@ -11,7 +11,7 @@ class Stock extends React.Component {
         this.state = {
             historicalData: [],
             isLoading: true,
-            error: null
+            errorMassage: null
         }
 
         this.fetchHistoricalData = this.fetchHistoricalData.bind(this);
@@ -32,7 +32,7 @@ class Stock extends React.Component {
                 error: error.message,
                 isLoading: false
             });
-            console.error('Error fetching stock data:', error);
+            console.errorMassage('Error fetching stock data:', error);
         }
     }
 

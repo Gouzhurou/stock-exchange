@@ -24,7 +24,7 @@ export class StocksService {
 
         const stockIndex = jsonData.stocks.findIndex(stock => stock.id === id);
         if (stockIndex === -1) {
-            return { success: false, error: 'Stock not found' };
+            return { success: false, errorMassage: 'Stock not found' };
         }
 
         const selected = jsonData.stocks[stockIndex].selected;

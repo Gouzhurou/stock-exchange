@@ -6,6 +6,7 @@ import type { Response } from 'express';
 @Injectable()
 export class ImagesService {
     private readonly uploadsPath = join(__dirname, '..', '..', 'images');
+    private readonly defaultImageName = 'question.jpg';
 
     getImages(imageName: string, res: Response) {
         const safeImageName = this.validateImageName(imageName);
@@ -19,8 +20,9 @@ export class ImagesService {
     }
 
     private validateImageName(imageName: string): string {
-        if (imageName.includes('..') || imageName.includes('/') || imageName.includes('\\')) {
-            return 'question.jpg';
+        const imagePath = join(this.uploadsPath, imageName);
+        if (imageName.includes('..') || imageName.includes('/') || imageName.includes('\\') || !existsSync(imagePath)) {
+            return this.defaultImageName;
         }
         return imageName;
     }
