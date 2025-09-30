@@ -1,13 +1,10 @@
 <template>
-  <BrokerPage></BrokerPage>
+  <router-view></router-view>
 </template>
 
 <script>
-import BrokerPage from "@/components/Broker.vue";
-
 export default {
-  name: 'App',
-  components: {BrokerPage }
+  name: 'App'
 }
 </script>
 
