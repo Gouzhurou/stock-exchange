@@ -45,3 +45,4 @@
 
 - React
 - NestJS
+- Vue

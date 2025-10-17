@@ -1,15 +1,17 @@
   <template>
-    <div class="input-block">
-      <p class="input__title">Введите имя</p>
-      <input
-          class="input"
-          type="text"
-          placeholder="Name"
-          v-model="brokerName"
-          @keyup.enter="login"
-      >
-      <button class="button" @click="login">Войти</button>
-      <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+    <div class="login-container">
+      <div class="input-block">
+        <p class="input__title">Введите имя</p>
+        <input
+            class="input"
+            type="text"
+            placeholder="Name"
+            v-model="brokerName"
+            @keyup.enter="login"
+        >
+        <button class="button login-button" @click="login">Войти</button>
+        <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+      </div>
     </div>
   </template>
 
@@ -41,7 +43,7 @@
           const data = response.data;
 
           if (data.success) {
-            localStorage.setItem('currentBroker', JSON.stringify(data.broker));
+            this.$store.dispatch('login', data.broker);
             this.$router.push('/broker');
           } else {
             this.errorMessage = data.message;
@@ -62,12 +64,12 @@
   </script>
 
 <style>
-* {
-  padding: 0;
-  margin: 0;
-}
-body {
-  height: 100vh;
+.login-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -93,13 +95,12 @@ body {
   font-size: 16px;
   font-weight: 500;
 }
-.button {
+.login-button {
   width: 100%;
-  border: none;
-  border-radius: 12px;
+}
+.error-message {
   font-size: 16px;
-  background-color: #FFD500;
-  padding: 16px 64px;
-  box-sizing: border-box;
+  font-weight: 500;
+  color: #AC0000;
 }
 </style>

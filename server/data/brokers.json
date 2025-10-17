@@ -5,56 +5,152 @@
       "name": "alexey",
       "balance": 213000,
       "selected": false,
-      "isEditing": false
+      "isEditing": false,
+      "stockCount": {
+        "AAPL": 1,
+        "AMD": 1,
+        "AMZN": 0,
+        "CSCO": 0,
+        "META": 0,
+        "MSFT": 0,
+        "NFLX": 0,
+        "QCOM": 0,
+        "SBUX": 0,
+        "TSLA": 0
+      }
     },
     {
       "id": 4,
       "name": "elena888",
       "balance": 54320,
       "selected": false,
-      "isEditing": false
+      "isEditing": false,
+      "stockCount": {
+        "AAPL": 1,
+        "AMD": 1,
+        "AMZN": 0,
+        "CSCO": 0,
+        "META": 0,
+        "MSFT": 0,
+        "NFLX": 0,
+        "QCOM": 0,
+        "SBUX": 0,
+        "TSLA": 0
+      }
     },
     {
       "id": 5,
       "name": "wolf",
       "balance": 98765,
       "selected": false,
-      "isEditing": false
+      "isEditing": false,
+      "stockCount": {
+        "AAPL": 1,
+        "AMD": 1,
+        "AMZN": 0,
+        "CSCO": 0,
+        "META": 0,
+        "MSFT": 0,
+        "NFLX": 0,
+        "QCOM": 0,
+        "SBUX": 0,
+        "TSLA": 0
+      }
     },
     {
       "id": 6,
       "name": "john_snow",
       "balance": 156789,
       "selected": false,
-      "isEditing": false
+      "isEditing": false,
+      "stockCount": {
+        "AAPL": 1,
+        "AMD": 1,
+        "AMZN": 0,
+        "CSCO": 0,
+        "META": 0,
+        "MSFT": 0,
+        "NFLX": 0,
+        "QCOM": 0,
+        "SBUX": 0,
+        "TSLA": 0
+      }
     },
     {
       "id": 7,
       "name": "sergay",
       "balance": 76543,
       "selected": false,
-      "isEditing": false
+      "isEditing": false,
+      "stockCount": {
+        "AAPL": 1,
+        "AMD": 1,
+        "AMZN": 0,
+        "CSCO": 0,
+        "META": 0,
+        "MSFT": 0,
+        "NFLX": 0,
+        "QCOM": 0,
+        "SBUX": 0,
+        "TSLA": 0
+      }
     },
     {
       "id": 8,
       "name": "anna228",
       "balance": 43210,
       "selected": false,
-      "isEditing": false
+      "isEditing": false,
+      "stockCount": {
+        "AAPL": 1,
+        "AMD": 1,
+        "AMZN": 0,
+        "CSCO": 0,
+        "META": 0,
+        "MSFT": 0,
+        "NFLX": 0,
+        "QCOM": 0,
+        "SBUX": 0,
+        "TSLA": 0
+      }
     },
     {
       "id": 9,
       "name": "pavel",
       "balance": 111111,
       "selected": false,
-      "isEditing": false
+      "isEditing": false,
+      "stockCount": {
+        "AAPL": 1,
+        "AMD": 1,
+        "AMZN": 0,
+        "CSCO": 0,
+        "META": 0,
+        "MSFT": 0,
+        "NFLX": 0,
+        "QCOM": 0,
+        "SBUX": 0,
+        "TSLA": 0
+      }
     },
     {
       "id": 10,
       "name": "natalya",
       "balance": 222222,
       "selected": false,
-      "isEditing": false
+      "isEditing": false,
+      "stockCount": {
+        "AAPL": 1,
+        "AMD": 1,
+        "AMZN": 0,
+        "CSCO": 0,
+        "META": 0,
+        "MSFT": 0,
+        "NFLX": 0,
+        "QCOM": 0,
+        "SBUX": 0,
+        "TSLA": 0
+      }
     }
   ]
 }
