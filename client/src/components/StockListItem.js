@@ -1,6 +1,6 @@
 import React from "react";
 import "../css/ListItem.css"
-import {io} from "socket.io-client";
+import {useWebSocket} from "../WebSocketContext";
 
 class StockListItem extends React.Component {
     constructor(props) {
@@ -14,7 +14,6 @@ class StockListItem extends React.Component {
         }
 
         this.intervalId = null;
-        this.socket = null;
 
         this.handleSelectedClick = this.handleSelectedClick.bind(this);
         this.YYYYMMDDToMMDDYYYY = this.YYYYMMDDToMMDDYYYY.bind(this);
@@ -23,7 +22,6 @@ class StockListItem extends React.Component {
         this.startPriceInterval = this.startPriceInterval.bind(this);
         this.stopPriceInterval = this.stopPriceInterval.bind(this);
         this.findFirstDate = this.findFirstDate.bind(this);
-        this.connectWebSocket = this.connectWebSocket.bind(this);
         this.sendPriceUpdate = this.sendPriceUpdate.bind(this);
     }
 
@@ -35,29 +33,12 @@ class StockListItem extends React.Component {
         const data = await response.json();
         this.setState({data: data})
 
-        this.connectWebSocket();
-    }
-
-    connectWebSocket() {
-        this.socket = io('http://localhost:3002', {
-            transports: ['websocket', 'polling']
-        });
-
-        this.socket.on('connect', () => {
-            console.log('Connected to WebSocket server');
-        });
-
-        this.socket.on('disconnect', () => {
-            console.log('Disconnected from WebSocket server');
-        });
-
-        this.socket.on('error', (error) => {
-            console.error('WebSocket error:', error);
-        });
-
-        this.socket.on('startTradingConfirmed', (data) => {
-            console.log('Trading start confirmed:', data.message);
-        });
+        const { socket } = this.props;
+        if (socket) {
+            socket.on('startTradingConfirmed', (data) => {
+                console.log('Trading start confirmed:', data.message);
+            });
+        }
     }
 
     // выполняется при изменениях в props
@@ -73,14 +54,11 @@ class StockListItem extends React.Component {
     // выполняется при размонтировании
     componentWillUnmount() {
         this.stopPriceInterval();
-        if (this.socket) {
-            this.socket.disconnect();
-        }
     }
 
     sendPriceUpdate(index) {
-        const { stock } = this.props;
-        if (this.socket && this.socket.connected && stock.selected) {
+        const { stock, socket } = this.props;
+        if (socket && socket.connected && stock.selected) {
             const { data, currentPrice, prevPrice } = this.state;
 
             const updateData = {
@@ -90,13 +68,13 @@ class StockListItem extends React.Component {
                 difference: (currentPrice - prevPrice).toFixed(2),
             };
 
-            this.socket.emit('priceUpdate', updateData);
+            socket.emit('priceUpdate', updateData);
             console.log('Sending price update:', updateData);
         }
     }
 
     handleSimulationChange() {
-        const { isSimulationRunning, stock, date } = this.props;
+        const { isSimulationRunning, stock, date, socket } = this.props;
 
         if (isSimulationRunning && stock.selected && date) {
             const startIndex = this.findFirstDate();
@@ -113,7 +91,7 @@ class StockListItem extends React.Component {
                     difference: null
                 }
 
-                this.socket.emit('startTrading', tradingData);
+                socket.emit('startTrading', tradingData);
                 console.log('Trading has started:', tradingData);
 
                 this.setState({
@@ -214,10 +192,12 @@ class StockListItem extends React.Component {
     }
 
     stopPriceInterval() {
+        const { socket } = this.props;
+
         if (this.intervalId) {
             clearInterval(this.intervalId);
             this.intervalId = null;
-            this.socket.emit('stopTrading');
+            socket.emit('stopTrading');
         }
     }
 
@@ -296,4 +276,8 @@ class StockListItem extends React.Component {
     }
 }
 
-export default StockListItem;
+export default function StockListItemWrapper(props) {
+    const { socket, isConnected } = useWebSocket();
+
+    return <StockListItem {...props} socket={socket} isConnected={isConnected} />;
+}
