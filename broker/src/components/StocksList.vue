@@ -1,6 +1,6 @@
 <template>
   <div class="stocks-list">
-    <div v-for="stock in stocks" :key="stock.id" class="stock">
+    <div v-for="stock in stocks" :key="stock.id" class="stock table-row">
       <div class="row-gap16 stock__heading">
         <img class="round-img stock__img"
              :src="getImageUrl(stock.id)"
@@ -8,6 +8,16 @@
         >
         <p class="text">{{ stock.id }}</p>
       </div>
+
+      <p
+          class="text"
+          :class="{ 'price': stockPrices[stock.id] }"
+      >{{ stockPrices[stock.id] ? stockPrices[stock.id].currentPrice : "" }}</p>
+
+      <p
+          class="text"
+          :class="stockPrices[stock.id] && stockPrices[stock.id].difference > 0 ? 'green-text' : 'red-text'"
+      >{{ stockPrices[stock.id] ? stockPrices[stock.id].difference : "" }}</p>
 
     </div>
   </div>
@@ -17,6 +27,12 @@
 import axios from 'axios';
 export default {
   name: 'StocksList',
+  props: {
+    stockPrices: {
+      type: Object,
+      default: () => ({})
+    }
+  },
   data() {
     return {
       stocks: [],
@@ -63,6 +79,7 @@ export default {
 .stock {
   padding: 16px 8px;
   box-sizing: border-box;
+  background-color: #fff;
 }
 .round-img {
   border-radius: 50%;
@@ -74,5 +91,11 @@ export default {
 }
 .stock__heading {
   align-items: center;
+}
+.green-text {
+  color: #20AC00;
+}
+.red-text {
+  color: #ac0000;
 }
 </style>

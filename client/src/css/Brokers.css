@@ -23,6 +23,7 @@
 }
 .checkbox-selected {
     background-image: url('../../public/selected.png');
+    background-color: #FFD500;
     background-repeat: no-repeat;
     background-size: 16px 16px;
 }

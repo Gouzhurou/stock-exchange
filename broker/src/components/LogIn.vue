@@ -83,7 +83,7 @@
 }
 .input__title {
   font-size: 24px;
-  font-weight: 600;
+  font-weight: 500;
 }
 .input {
   width: 100%;
@@ -100,7 +100,7 @@
 }
 .error-message {
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 400;
   color: #AC0000;
 }
 </style>

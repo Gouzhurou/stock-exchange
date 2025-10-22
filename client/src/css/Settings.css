@@ -57,10 +57,15 @@
     background-color: white;
 }
 
+.settings__list-item:hover {
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
 .settings__content {
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
+    transition: font-size 0.3s ease;
 }
 
 .right-side {

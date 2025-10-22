@@ -9,6 +9,14 @@ export default {
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+#app {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 * {
   padding: 0;
   margin: 0;
@@ -18,7 +26,7 @@ a {
 }
 .heading {
   font-size: 24px;
-  font-weight: 600;
+  font-weight: 500;
 }
 .price::after {
   content: " $";

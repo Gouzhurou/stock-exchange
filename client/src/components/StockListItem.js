@@ -1,5 +1,6 @@
 import React from "react";
 import "../css/ListItem.css"
+import {io} from "socket.io-client";
 
 class StockListItem extends React.Component {
     constructor(props) {
@@ -13,13 +14,17 @@ class StockListItem extends React.Component {
         }
 
         this.intervalId = null;
+        this.socket = null;
 
         this.handleSelectedClick = this.handleSelectedClick.bind(this);
         this.YYYYMMDDToMMDDYYYY = this.YYYYMMDDToMMDDYYYY.bind(this);
         this.dateToMMDDYYYY = this.dateToMMDDYYYY.bind(this);
+        this.MMDDYYYYtoDDMMYYYY = this.MMDDYYYYtoDDMMYYYY.bind(this);
         this.startPriceInterval = this.startPriceInterval.bind(this);
         this.stopPriceInterval = this.stopPriceInterval.bind(this);
         this.findFirstDate = this.findFirstDate.bind(this);
+        this.connectWebSocket = this.connectWebSocket.bind(this);
+        this.sendPriceUpdate = this.sendPriceUpdate.bind(this);
     }
 
     // выполняется сразу после монтирования
@@ -29,6 +34,30 @@ class StockListItem extends React.Component {
 
         const data = await response.json();
         this.setState({data: data})
+
+        this.connectWebSocket();
+    }
+
+    connectWebSocket() {
+        this.socket = io('http://localhost:3002', {
+            transports: ['websocket', 'polling']
+        });
+
+        this.socket.on('connect', () => {
+            console.log('Connected to WebSocket server');
+        });
+
+        this.socket.on('disconnect', () => {
+            console.log('Disconnected from WebSocket server');
+        });
+
+        this.socket.on('error', (error) => {
+            console.error('WebSocket error:', error);
+        });
+
+        this.socket.on('startTradingConfirmed', (data) => {
+            console.log('Trading start confirmed:', data.message);
+        });
     }
 
     // выполняется при изменениях в props
@@ -44,6 +73,26 @@ class StockListItem extends React.Component {
     // выполняется при размонтировании
     componentWillUnmount() {
         this.stopPriceInterval();
+        if (this.socket) {
+            this.socket.disconnect();
+        }
+    }
+
+    sendPriceUpdate(index) {
+        const { stock } = this.props;
+        if (this.socket && this.socket.connected && stock.selected) {
+            const { data, currentPrice, prevPrice } = this.state;
+
+            const updateData = {
+                stockId: stock.id,
+                date: this.MMDDYYYYtoDDMMYYYY(data[index].date),
+                open: currentPrice,
+                difference: (currentPrice - prevPrice).toFixed(2),
+            };
+
+            this.socket.emit('priceUpdate', updateData);
+            console.log('Sending price update:', updateData);
+        }
     }
 
     handleSimulationChange() {
@@ -54,9 +103,22 @@ class StockListItem extends React.Component {
 
             if (startIndex !== -1) {
                 const { data } = this.state;
+                const initialPrice = data[startIndex]?.open || null;
+
+                const tradingData = {
+                    period: this.props.period,
+                    stockId: stock.id,
+                    date: this.MMDDYYYYtoDDMMYYYY(data[startIndex].date),
+                    open: data[startIndex].open,
+                    difference: null
+                }
+
+                this.socket.emit('startTrading', tradingData);
+                console.log('Trading has started:', tradingData);
+
                 this.setState({
                     currentDateIndex: startIndex,
-                    currentPrice: data[startIndex]?.open || null
+                    currentPrice: initialPrice
                 }, () => {
                     this.startPriceInterval();
                 });
@@ -107,6 +169,11 @@ class StockListItem extends React.Component {
         return `${month}/${day}/${year}`;
     }
 
+    MMDDYYYYtoDDMMYYYY(date) {
+        const [month, day, year] = date.split('/');
+        return `${day}.${month}.${year}`;
+    }
+
     dateToMMDDYYYY(date) {
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -125,8 +192,10 @@ class StockListItem extends React.Component {
                 const nextIndex = currentDateIndex + parseInt(period, 10);
 
                 if (nextIndex < data.length) {
-                    // console.log(`${stock.id} ${data[nextIndex].date}`);
                     const nextPrice = data[nextIndex].open;
+
+                    this.sendPriceUpdate(nextIndex);
+
                     return {
                         prevPrice: this.state.currentPrice,
                         currentPrice: nextPrice,
@@ -141,13 +210,14 @@ class StockListItem extends React.Component {
                     };
                 }
             });
-        }, 1000);
+        }, 3000);
     }
 
     stopPriceInterval() {
         if (this.intervalId) {
             clearInterval(this.intervalId);
             this.intervalId = null;
+            this.socket.emit('stopTrading');
         }
     }
 

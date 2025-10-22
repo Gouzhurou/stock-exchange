@@ -2,7 +2,7 @@
   <div class="container">
     <header class="header">
       <button
-          class="logout-button"
+          class="icon"
           :style="{ backgroundImage: `url(${ buttonBgUrl })` }"
           @mouseenter="buttonBgUrl = hoverBgUrl"
           @mouseleave="buttonBgUrl = normalBgUrl"
@@ -11,9 +11,36 @@
     </header>
 
     <div class="main">
-      <section>
-        <p class="heading">Стоимость портфеля</p>
-        <p class="text price total-balance">{{ brokerBalance }}</p>
+      <section class="broker-info">
+        <div class="broker-info__top broker-info__item">
+          <p class="heading">{{ date ? date : dateMsg }}</p>
+          <p class="heading">{{ brokerName }}</p>
+          <p class="text price total-balance">{{ totalBalance }}</p>
+        </div>
+        <div class="divider"></div>
+
+        <div class="balance-block broker-info__item">
+          <div
+              class="icon"
+              :style="{ backgroundImage: `url(${ stocksUrl })` }"
+          ></div>
+          <div class="balance-block__container">
+            <p class="balance-block__title">Акции</p>
+            <p class="price">{{ stocksBalance }}</p>
+          </div>
+        </div>
+        <div class="divider"></div>
+
+        <div class="balance-block broker-info__item">
+          <div
+              class="icon"
+              :style="{ backgroundImage: `url(${ otherUrl })` }"
+          ></div>
+          <div class="balance-block__container">
+            <p class="balance-block__title">Другое</p>
+            <p class="price">{{ brokerBalance }}</p>
+          </div>
+        </div>
       </section>
 
       <section></section>
@@ -22,10 +49,10 @@
         <div class="headings table-row">
           <p class="table__heading">Название</p>
           <p class="table__heading">Цена</p>
-          <p class="table__heading">Изм, 1д</p>
+          <p class="table__heading">Изм {{ period ? `, ${period}д` : "" }}</p>
         </div>
 
-        <StocksList></StocksList>
+        <StocksList :stockPrices="stocksData"></StocksList>
       </section>
     </div>
   </div>
@@ -33,21 +60,33 @@
 
 <script>
 import StocksList from "@/components/StocksList.vue";
+import io from 'socket.io-client';
 
 export default {
   name: 'BrokerPage',
   components: {StocksList},
   data() {
     return {
+      socket: null,
+      date: null,
+      dateMsg: "00.00.0000",
+      period: null,
+      stocksData: {},
       normalBgUrl: '/logout.png',
       buttonBgUrl: '/logout.png',
-      hoverBgUrl: '/hover-logout.png'
+      hoverBgUrl: '/hover-logout.png',
+      stocksUrl: '/stocks.png',
+      otherUrl: '/backpack.png',
+      imagesLoaded: false,
     }
   },
   mounted() {
+    this.preloadImages();
+    this.connectWebSocket();
     window.addEventListener('beforeunload', this.handleBeforeUnload);
   },
   beforeUnmount() {
+    this.disconnectWebSocket();
     window.removeEventListener('beforeunload', this.handleBeforeUnload);
   },
   computed: {
@@ -67,13 +106,102 @@ export default {
         return '';
       }
 
-      return new Intl.NumberFormat('ru-RU', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2
-      }).format(balance);
+      return balance;
+    },
+    stocksBalance() {
+      let balance = 0;
+
+      Object.entries(this.broker.stockCount).forEach(([stockSymbol, quantity]) => {
+        if (this.stocksData[stockSymbol] && quantity > 0) {
+          const currentPrice = this.stocksData[stockSymbol].currentPrice;
+          balance += currentPrice * quantity;
+        }
+      });
+
+      return balance;
+    },
+    totalBalance() {
+      return this.stocksBalance + this.brokerBalance;
     }
   },
   methods: {
+    connectWebSocket() {
+      this.socket = io('http://localhost:3002', {
+        transports: ['websocket', 'polling']
+      });
+
+      this.socket.on('connect', () => {
+        console.log('Connected to trading server');
+      });
+
+      this.socket.on('tradingStarted', (data) => {
+        this.handleTradingStarted(data.data);
+      });
+
+      this.socket.on('priceUpdated', (data) => {
+        this.handlePriceUpdate(data.data);
+      });
+
+      this.socket.on('tradingStopped', () => {
+        this.handleTradingStopped();
+      });
+
+      this.socket.on('disconnect', () => {
+        console.log('Disconnected from trading server');
+      });
+    },
+
+    disconnectWebSocket() {
+      if (this.socket) {
+        this.socket.disconnect();
+      }
+    },
+
+    handleTradingStarted(data) {
+      this.updateTrading(data);
+      this.period = data.period;
+    },
+
+    handlePriceUpdate(data) {
+      this.updateTrading(data);
+    },
+
+    updateTrading(data) {
+      this.stocksData[data.stockId] = {
+        currentPrice: data.open,
+        difference: data.difference,
+      };
+
+      this.date = data.date;
+    },
+
+    handleTradingStopped() {
+      this.date = null;
+      this.period = null;
+      this.stocksData = {};
+    },
+
+    preloadImages() {
+      const imageUrls = [this.hoverBgUrl];
+
+      const loadImage = (url) => {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = resolve;
+          img.onerror = reject;
+          img.src = url;
+        });
+      };
+
+      Promise.all(imageUrls.map(loadImage))
+          .then(() => {
+            this.imagesLoaded = true;
+          })
+          .catch(error => {
+            console.error('Error preloading images:', error);
+          });
+    },
+
     logout() {
       this.$store.dispatch('logout');
       this.$router.push('/login');
@@ -125,7 +253,7 @@ export default {
   font-weight: 600;
 }
 .text {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 500;
 }
 .row-gap16 {
@@ -137,15 +265,50 @@ export default {
   font-size: 24px;
   font-weight: 600;
 }
-.logout-button {
+.icon {
   width: 32px;
   height: 32px;
   background-size: cover;
   border: none;
   background-color: #fff;
+}
+
+.logout-button {
   transition: transform 0.3s ease;
 }
 .logout-button:hover {
   transform: scale(1.1);
+}
+
+.broker-info__top{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding-top: 0px !important;
+}
+.broker-info__item {
+  padding: 16px;
+}
+.divider {
+  height: 1px;
+  background-color: #616161;
+  width: 100%;
+}
+.balance-block {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  align-items: center;
+}
+.balance-block__container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.balance-block__title {
+  font-size: 16px;
+  font-weight: 400;
+  color: #616161;
 }
 </style>
