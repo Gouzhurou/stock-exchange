@@ -15,7 +15,7 @@
         <div class="broker-info__top broker-info__item">
           <p class="heading">{{ date ? date : dateMsg }}</p>
           <p class="heading">{{ brokerName }}</p>
-          <p class="text price total-balance">{{ totalBalance }}</p>
+          <p class="price heading">{{ totalBalance }}</p>
         </div>
         <div class="divider"></div>
 
@@ -72,6 +72,7 @@ export default {
       dateMsg: "00.00.0000",
       period: null,
       stocksData: {},
+
       normalBgUrl: '/logout.png',
       buttonBgUrl: '/logout.png',
       hoverBgUrl: '/hover-logout.png',
@@ -114,9 +115,9 @@ export default {
         return balance;
       }
 
-      Object.entries(this.broker.stockCount).forEach(([stockSymbol, quantity]) => {
-        if (this.stocksData[stockSymbol] && quantity > 0) {
-          const currentPrice = this.stocksData[stockSymbol].currentPrice;
+      Object.entries(this.broker.stockCount).forEach(([stockId, quantity]) => {
+        if (this.stocksData[stockId] && quantity > 0) {
+          const currentPrice = this.stocksData[stockId].currentPrice;
           balance += currentPrice * quantity;
         }
       });
@@ -263,10 +264,6 @@ export default {
   display: flex;
   flex-direction: row;
   gap: 16px;
-}
-.total-balance {
-  font-size: 24px;
-  font-weight: 600;
 }
 .icon {
   width: 32px;
