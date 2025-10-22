@@ -110,6 +110,9 @@ export default {
     },
     stocksBalance() {
       let balance = 0;
+      if (!this.broker) {
+        return balance;
+      }
 
       Object.entries(this.broker.stockCount).forEach(([stockSymbol, quantity]) => {
         if (this.stocksData[stockSymbol] && quantity > 0) {
