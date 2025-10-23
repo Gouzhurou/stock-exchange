@@ -56,10 +56,10 @@ class StockListItem extends React.Component {
         this.stopPriceInterval();
     }
 
-    sendPriceUpdate(index) {
+    sendPriceUpdate(index, prevPrice, currentPrice) {
         const { stock, socket } = this.props;
         if (socket && socket.connected && stock.selected) {
-            const { data, currentPrice, prevPrice } = this.state;
+            const { data } = this.state;
 
             const updateData = {
                 stockId: stock.id,
@@ -74,9 +74,9 @@ class StockListItem extends React.Component {
     }
 
     handleSimulationChange() {
-        const { isSimulationRunning, stock, date, socket } = this.props;
+        const { isSimulationRunning, stock, socket } = this.props;
 
-        if (isSimulationRunning && stock.selected && date) {
+        if (isSimulationRunning && stock.selected) {
             const startIndex = this.findFirstDate();
 
             if (startIndex !== -1) {
@@ -103,10 +103,6 @@ class StockListItem extends React.Component {
             }
         } else {
             this.stopPriceInterval();
-            this.setState({
-                currentPrice: null,
-                currentDateIndex: -1
-            });
         }
     }
 
@@ -165,39 +161,55 @@ class StockListItem extends React.Component {
 
         this.intervalId = setInterval(() => {
             this.setState(prevState => {
-                const { data, currentDateIndex } = prevState;
+                const { data, currentDateIndex, currentPrice } = prevState;
                 const { period } = this.props;
                 const nextIndex = currentDateIndex + parseInt(period, 10);
 
                 if (nextIndex < data.length) {
                     const nextPrice = data[nextIndex].open;
 
-                    this.sendPriceUpdate(nextIndex);
-
                     return {
-                        prevPrice: this.state.currentPrice,
+                        prevPrice: currentPrice,
                         currentPrice: nextPrice,
                         currentDateIndex: nextIndex
                     };
                 } else {
-                    clearInterval(this.intervalId);
-                    this.intervalId = null;
+                    this.props.onSimulationEnd();
+
                     return {
                         currentPrice: null,
+                        prevPrice: null,
                         currentDateIndex: -1
                     };
                 }
+            }, () => {
+                // вызывается после завершения setState
+                const { currentDateIndex, prevPrice, currentPrice } = this.state;
+
+                if (currentDateIndex !== -1) {
+                    this.sendPriceUpdate(currentDateIndex, prevPrice, currentPrice);
+                } else {
+                    this.stopPriceInterval();
+                }
             });
-        }, 3000);
+        }, 1000);
     }
 
     stopPriceInterval() {
-        const { socket } = this.props;
+         if (this.intervalId) {
+             const { socket, stock } = this.props;
 
-        if (this.intervalId) {
-            clearInterval(this.intervalId);
-            this.intervalId = null;
-            socket.emit('stopTrading');
+             clearInterval(this.intervalId);
+             this.intervalId = null;
+
+             this.setState({
+                 currentPrice: null,
+                 prevPrice: null,
+                 currentDateIndex: -1
+             });
+
+             socket.emit('stopTrading');
+             console.log('Trading has stopped: ', stock.id);
         }
     }
 
@@ -234,41 +246,16 @@ class StockListItem extends React.Component {
                     </div>
 
                     <div className="list-item-content right-side">
-                        <p className=
-                               {`
-                               list-item__heading
-                               ${isSimulationRunning && stock.selected && currentPrice !== null ? 'price' : ''}
-                               ${isSimulationRunning && stock.selected && currentPrice !== null && prevPrice !== null
-                                   ? (currentPrice - prevPrice) > 0 ? 'green-text'
-                                       : (currentPrice - prevPrice) < 0 ? 'red-text'
-                                           : ''
-                                   : ''
-                               }
-                               `}
-                        >
-                            {isSimulationRunning && stock.selected && currentPrice !== null
-                                ? `${(currentPrice - prevPrice).toFixed(2)}`
-                                : ""
-                            }
-                        </p>
-                        <p className=
-                               {`
-                               list-item__heading
-                               ${isSimulationRunning && stock.selected && currentPrice !== null ? 'percent' : ''}
-                               ${isSimulationRunning && stock.selected && currentPrice !== null && prevPrice !== null
-                                   ? (currentPrice - prevPrice) > 0 ? 'green-text'
-                                       : (currentPrice - prevPrice) < 0 ? 'red-text'
-                                           : ''
-                                   : ''
-                               }
-                               `}
-                        >
-                            {isSimulationRunning && stock.selected && currentPrice !== null
-                                ? (currentPrice - prevPrice) > 0 ? `${(100 - prevPrice * 100 / currentPrice).toFixed(2)}`
-                                    : `${(100 - currentPrice * 100 / prevPrice).toFixed(2)}`
-                                : ""
-                            }
-                        </p>
+                        {isSimulationRunning && stock.selected && currentPrice && prevPrice && (
+                            <>
+                                <p className={`list-item__heading price ${currentPrice >= prevPrice ? 'green-text' : 'red-text'}`}>
+                                    {(currentPrice - prevPrice).toFixed(2)}
+                                </p>
+                                <p className={`list-item__heading percent ${currentPrice >= prevPrice ? 'green-text' : 'red-text'}`}>
+                                    {Math.abs(((currentPrice - prevPrice) / prevPrice) * 100).toFixed(2)}
+                                </p>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>

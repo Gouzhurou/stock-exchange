@@ -134,6 +134,7 @@ function Settings() {
                             period={period}
                             isSimulationRunning={isSimulationRunning}
                             onUpdate={updateStock}
+                            onSimulationEnd={endSimulation}
                         />
                     ))}
                 </div>
