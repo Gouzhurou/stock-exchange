@@ -74,6 +74,13 @@ function Settings() {
             return;
         }
 
+        const hasSelectedStocks = stocks.some(stock => stock.selected);
+
+        if (!hasSelectedStocks) {
+            alert("Пожалуйста, выберите хотя бы одну акцию для симуляции");
+            return;
+        }
+
         setIsSimulationRunning(true);
     }
 
