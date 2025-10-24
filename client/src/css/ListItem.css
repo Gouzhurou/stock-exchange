@@ -11,6 +11,9 @@
     flex-direction: column;
     gap: 24px;
 }
+.list-item:hover {
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
 .list-item__top {
     align-items: center;
     justify-content: space-between;
@@ -36,8 +39,14 @@
     height: 24px;
     border: none;
     background-color: white;
+    transition: transform 0.3s ease;
+}
+#edit-button:hover {
+    background-image: url('../../public/hover-edit.png');
+    transform: scale(1.1);
 }
 .list-item-intro {
+    width: 100%;
     align-items: center;
     gap: 16px;
 }

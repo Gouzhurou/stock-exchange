@@ -35,4 +35,9 @@
     height: 24px;
     border: none;
     background-color: #f6f6f6;
+    transition: transform 0.3s ease;
+}
+#delete-button:hover {
+    background-image: url('../../public/hover-trash.png');
+    transform: scale(1.1);
 }
