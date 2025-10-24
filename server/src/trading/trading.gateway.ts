@@ -96,6 +96,22 @@ export class TradingGateway implements OnGatewayConnection, OnGatewayDisconnect 
         });
     }
 
+    @SubscribeMessage('updateBalance')
+    handleUpdateBalance(client: Socket, data: any) {
+        const clientId = client.id;
+        const clientData = this.clients.get(clientId);
+
+        console.log(`Balance update from ${clientData?.brokerName}:`, data);
+
+        this.server.emit('balanceUpdated', {
+            type: 'BALANCE_UPDATED',
+            data: {
+                ...data,
+                updatedBy: clientData?.brokerName
+            }
+        })
+    }
+
     // Получение списка клиентов
     @SubscribeMessage('getClients')
     handleGetClients(client: Socket) {

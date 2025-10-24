@@ -2,16 +2,40 @@ import "../css/Brokers.css"
 import '../css/Input.css'
 import React, { useState, useEffect } from "react";
 import Broker from "./Broker";
+import { useWebSocket } from "../WebSocketContext";
 
 function Brokers() {
     const [name, setName] = useState("");
     const [brokers, setBrokers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { socket } = useWebSocket();
 
     useEffect(() => {
         fetchBrokers();
-    }, []);
+
+        if (socket) {
+            socket.on('balanceUpdated', (data) => {
+                handleBalanceUpdate(data.data);
+            });
+
+            return () => {
+                socket.off('balanceUpdated');
+            };
+        }
+    }, [socket]);
+
+    const handleBalanceUpdate = (data) => {
+        console.log('Received balance update:', data);
+
+        setBrokers(prevBrokers =>
+            prevBrokers.map(broker =>
+                broker.id === data.brokerId
+                    ? { ...broker, balance: data.newBalance }
+                    : broker
+            )
+        );
+    };
 
     const fetchBrokers = async () => {
         try {
@@ -23,7 +47,7 @@ function Brokers() {
             setBrokers(data.brokers || []);
         } catch (error) {
             setError(error.message);
-            console.errorMassage('Error loading brokers:', error);
+            console.error('Error loading brokers:', error);
         } finally {
             setIsLoading(false);
         }
@@ -53,14 +77,14 @@ function Brokers() {
             await fetchBrokers();
             setName("");
         } catch (error) {
-            console.errorMassage('Error adding broker:', error);
+            console.error('Error adding broker:', error);
         }
     };
 
     const updateBroker = async (updatedBroker) => {
         try {
             const {hostname, protocol} = window.location;
-            await fetch(`${protocol}//${hostname}:3001/brokers/${updatedBroker.id}`, {
+            const response = await fetch(`${protocol}//${hostname}:3001/brokers/${updatedBroker.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -68,13 +92,17 @@ function Brokers() {
                 body: JSON.stringify(updatedBroker),
             });
 
-            setBrokers(prevBrokers =>
-                prevBrokers.map(broker =>
-                    broker.id === updatedBroker.id ? updatedBroker : broker
-                )
-            );
+            if (response.ok) {
+                setBrokers(prevBrokers =>
+                    prevBrokers.map(broker =>
+                        broker.id === updatedBroker.id ? updatedBroker : broker
+                    )
+                );
+                return true;
+            }
+            return false;
         } catch (error) {
-            console.errorMassage('Error updating broker:', error);
+            console.error('Error updating broker:', error);
         }
     }
 
@@ -126,6 +154,7 @@ function Brokers() {
                             key={broker.id}
                             broker={broker}
                             onUpdate={updateBroker}
+                            socket={socket}
                         />
                     ))}
                 </div>

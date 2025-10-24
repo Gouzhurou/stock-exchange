@@ -6,7 +6,7 @@ import type { Response } from 'express';
 export class AuthorizationController {
     constructor(private readonly authorizationService: AuthorizationService) {}
 
-    @Post('login')
+    @Post()
     async login(@Body() loginData: { name: string }, @Res() res: Response) {
         const broker = await this.authorizationService.validateBroker(loginData.name);
 

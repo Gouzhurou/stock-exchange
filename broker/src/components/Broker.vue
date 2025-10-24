@@ -38,7 +38,28 @@
           ></div>
           <div class="balance-block__container">
             <p class="balance-block__title">Другое</p>
-            <p class="price">{{ brokerBalance }}</p>
+            <div class="row-gap8">
+              <p class="price">{{ brokerBalance }}</p>
+              <p v-if="amount" class="price"
+                 :class="isDeposit ? 'green-text' : 'red-text'"
+              >
+                {{ isDeposit ? `+${amount}` : `-${amount}` }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="column-gap16">
+          <button class="button full-width-button green-button" @click="deposit">Пополнить</button>
+          <input
+              class="input"
+              type="text"
+              placeholder="Balance"
+              v-model="balanceInput"
+          >
+          <button class="button full-width-button red-button" @click="withdraw">Снять</button>
+          <div v-if="errorMessage" class="error-message">
+            {{ errorMessage }}
           </div>
         </div>
       </section>
@@ -72,6 +93,10 @@ export default {
       dateMsg: "00.00.0000",
       period: null,
       stocksData: {},
+      balanceInput: '',
+      errorMessage: '',
+      amount: null,
+      isDeposit: false,
 
       normalBgUrl: '/logout.png',
       buttonBgUrl: '/logout.png',
@@ -129,6 +154,127 @@ export default {
     }
   },
   methods: {
+    async deposit() {
+      await this.updateBalance(true);
+    },
+
+    async withdraw() {
+      await this.updateBalance(false);
+    },
+
+    setErrorMessage(message) {
+      this.errorMessage = message;
+      setTimeout(() => {
+        this.errorMessage = '';
+      }, 3000);
+    },
+
+    async updateBalance(isDeposit) {
+      console.log('=== UPDATE BALANCE STARTED ===');
+      console.log('isDeposit:', isDeposit);
+      console.log('Current broker:', this.broker);
+      console.log('Current balance input:', this.balanceInput);
+
+      const amount = parseFloat(this.balanceInput);
+      console.log('Parsed amount:', amount);
+
+      if (!amount || amount <= 0) {
+        this.setErrorMessage('Пожалуйста, введите корректную сумму');
+        console.log('Error: Invalid amount');
+        return;
+      }
+
+      if (!this.broker) {
+        this.setErrorMessage('Брокер не найден');
+        console.log('Error: Broker not found');
+        return;
+      }
+
+      console.log('Current broker balance:', this.brokerBalance);
+
+      if (!isDeposit && amount > this.brokerBalance) {
+        this.setErrorMessage('Недостаточно средств для списания');
+        console.log('Error: Insufficient funds');
+        return;
+      }
+
+      try {
+        const newBalance = isDeposit
+            ? this.brokerBalance + amount
+            : this.brokerBalance - amount;
+        console.log('New balance to set:', newBalance);
+
+        const updatedBroker = {
+          ...this.broker,
+          balance: newBalance
+        };
+        console.log('Updated broker object:', updatedBroker);
+
+        const { hostname, protocol } = window.location;
+        const url = `${protocol}//${hostname}:3001/brokers/${this.broker.id}`;
+        console.log('Request URL:', url);
+
+        const response = await fetch(url, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedBroker)
+        });
+        console.log('Response status:', response.status);
+        console.log('Response ok:', response.ok);
+
+        if (response.ok) {
+          const result = await response.json();
+          console.log('Server response:', result);
+
+          if (result.success) {
+            console.log('Server update successful, emitting WebSocket event');
+
+            this.socket.emit('updateBalance', {
+              brokerId: this.broker.id,
+              newBalance: newBalance,
+              operation: isDeposit ? 'deposit' : 'withdraw',
+              amount: amount
+            });
+
+            this.balanceInput = '';
+            console.log('=== UPDATE BALANCE COMPLETED SUCCESSFULLY ===');
+          } else {
+            this.setErrorMessage(result.errorMessage || 'Ошибка при обновлении баланса');
+          }
+        } else {
+          this.setErrorMessage('Ошибка сервера при обновлении баланса');
+          console.log('Server error, status:', response.status);
+        }
+      } catch (error) {
+        console.error('Error updating balance:', error);
+        this.setErrorMessage('Ошибка при обновлении баланса');
+      }
+    },
+
+    async fetchBrokerData() {
+      console.log('=== FETCHING BROKER DATA FROM SERVER ===');
+      try {
+        const { hostname, protocol } = window.location;
+        const response = await fetch(`${protocol}//${hostname}:3001/brokers/${this.broker.id}`);
+        console.log('Brokers fetch response status:', response.status);
+
+        const updatedBroker = await response.json();
+        console.log('Broker data from server:', updatedBroker);
+
+        if (updatedBroker) {
+          console.log('Dispatching updateBroker action...');
+          this.$store.dispatch('updateBroker', updatedBroker);
+          console.log('Store updated with new broker data');
+        } else {
+          console.log('Broker not found in server response');
+        }
+      } catch (error) {
+        console.error('Error fetching broker data:', error);
+      }
+    },
+
     connectWebSocket() {
       this.socket = io('http://localhost:3002', {
         transports: ['websocket', 'polling'],
@@ -149,6 +295,10 @@ export default {
         this.handlePriceUpdate(data.data);
       });
 
+      this.socket.on('balanceUpdated', (data) => {
+        this.handleBalanceUpdate(data.data);
+      });
+
       this.socket.on('tradingStopped', () => {
         this.handleTradingStopped();
       });
@@ -156,6 +306,23 @@ export default {
       this.socket.on('disconnect', () => {
         console.log('Disconnected from trading server');
       });
+    },
+
+    handleBalanceUpdate(data) {
+      if (data.brokerId === this.broker.id) {
+        this.fetchBrokerData();
+
+        this.amount = data.amount;
+        if (data.operation === 'deposit') {
+          this.isDeposit = true;
+        } else if (data.operation === 'withdraw') {
+          this.isDeposit = false;
+        }
+
+        setTimeout(() => {
+          this.amount = null;
+        }, 3000);
+      }
     },
 
     disconnectWebSocket() {
@@ -313,5 +480,42 @@ export default {
   font-size: 16px;
   font-weight: 400;
   color: #616161;
+}
+.column-gap16 {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.row-gap8 {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.green-button {
+  background-color: #20AC00;
+  color: #fff;
+}
+.green-button:hover {
+  background-color: #1e8f00;
+}
+.green-button:active {
+  background-color: #20AC00;
+}
+.red-button {
+  background-color: #ac0000;
+  color: #fff;
+}
+.red-button:hover {
+  background-color: #8a0000;
+}
+.red-button:active {
+  background-color: #ac0000;
+}
+.green-text {
+  color: #20AC00;
+}
+.red-text {
+  color: #ac0000;
 }
 </style>

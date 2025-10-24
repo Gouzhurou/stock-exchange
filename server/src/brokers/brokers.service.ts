@@ -14,6 +14,17 @@ export class BrokersService {
         return JSON.parse(data);
     }
 
+    getBroker(id: number) {
+        const jsonData = this.getBrokers();
+        const broker = jsonData.brokers.find(broker => broker.id === id);
+
+        if (!broker) {
+            return { success: false, errorMassage: 'Broker not found' };
+        }
+
+        return broker;
+    }
+
     getEmptyStockCounts() {
         const stocks = this.stocksService.getStocks().stocks;
         const stockIds = stocks.map(stock => stock.id);

@@ -31,6 +31,23 @@ a {
 .price::after {
   content: " $";
 }
+.input {
+  width: 100%;
+  background-color: #F6F6F6;
+  border: none;
+  outline: none;
+  padding: 16px;
+  box-sizing: border-box;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 500;
+}
+.input:hover {
+  box-shadow: 0 0 0 2px #616161;
+}
+.input:focus {
+  box-shadow: 0 0 0 2px #FFD500;
+}
 .button {
   border: none;
   border-radius: 12px;
@@ -38,5 +55,19 @@ a {
   background-color: #FFD500;
   padding: 16px 64px;
   box-sizing: border-box;
+}
+.button:hover {
+  background-color: #F0C700;
+}
+.button:active {
+  background-color: #FFD500;
+}
+.full-width-button {
+  width: 100%;
+}
+.error-message {
+  font-size: 16px;
+  font-weight: 400;
+  color: #AC0000;
 }
 </style>

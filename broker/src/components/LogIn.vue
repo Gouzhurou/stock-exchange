@@ -9,7 +9,7 @@
             v-model="brokerName"
             @keyup.enter="login"
         >
-        <button class="button login-button" @click="login">Войти</button>
+        <button class="button full-width-button" @click="login">Войти</button>
         <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
       </div>
     </div>
@@ -36,7 +36,7 @@
         }
 
         try {
-          const response = await axios.post('/authorization/login', {
+          const response = await axios.post('/authorization', {
             name: this.brokerName
           });
 
@@ -84,23 +84,5 @@
 .input__title {
   font-size: 24px;
   font-weight: 500;
-}
-.input {
-  width: 100%;
-  background-color: #F6F6F6;
-  border: none;
-  padding: 16px;
-  box-sizing: border-box;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 500;
-}
-.login-button {
-  width: 100%;
-}
-.error-message {
-  font-size: 16px;
-  font-weight: 400;
-  color: #AC0000;
 }
 </style>

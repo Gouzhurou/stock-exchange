@@ -36,24 +36,44 @@ class Broker extends React.Component {
         this.setState({balance: e.target.value});
     }
 
-    handleBalanceClick() {
-        const newBalance = this.props.broker?.balance + parseInt(this.state.balance);
+    async handleBalanceChange(isDeposit) {
+        const amount = parseInt(this.state.balance);
+        if (isNaN(amount) || amount <= 0) {
+            return;
+        }
+
+        const newBalance = isDeposit
+            ? this.props.broker?.balance + amount
+            : this.props.broker?.balance - amount;
+
         const newBroker = {
             ...this.props.broker,
             balance: newBalance
         };
-        this.props.onUpdate(newBroker);
+
+        const updateSuccess = await this.props.onUpdate(newBroker);
+
+        if (updateSuccess) {
+            const { socket } = this.props;
+            if (socket && socket.connected) {
+                socket.emit('updateBalance', {
+                    brokerId: this.props.broker.id,
+                    newBalance: newBalance,
+                    operation: isDeposit ? 'deposit' : 'withdraw',
+                    amount: amount
+                });
+            }
+        }
+
         this.setState({balance: ""});
     }
 
+    handleBalanceClick() {
+        this.handleBalanceChange(true);
+    }
+
     handleNegativeBalanceClick() {
-        const newBalance = this.props.broker?.balance + parseInt(this.state.balance) * (-1);
-        const newBroker = {
-            ...this.props.broker,
-            balance: newBalance
-        };
-        this.props.onUpdate(newBroker);
-        this.setState({balance: ""});
+        this.handleBalanceChange(false);
     }
 
     render() {

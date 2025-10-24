@@ -78,6 +78,9 @@ body {
 .button:hover {
     background-color: #F0C700;
 }
+.button:active {
+    background-color: #FFD500;
+}
 .buttons {
     padding: 16px;
 }

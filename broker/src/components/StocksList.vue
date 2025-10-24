@@ -92,10 +92,4 @@ export default {
 .stock__heading {
   align-items: center;
 }
-.green-text {
-  color: #20AC00;
-}
-.red-text {
-  color: #ac0000;
-}
 </style>

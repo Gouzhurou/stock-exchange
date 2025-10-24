@@ -10,6 +10,11 @@ export class BrokersController {
         return this.brokersService.getBrokers();
     }
 
+    @Get(':id')
+    getBroker(@Param('id') id: string) {
+        return this.brokersService.getBroker(parseInt(id));
+    }
+
     @Post()
     addBroker(@Body() brokerData: any) {
         return this.brokersService.addBroker(brokerData);
