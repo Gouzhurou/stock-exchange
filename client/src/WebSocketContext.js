@@ -17,7 +17,10 @@ export const WebSocketProvider = ({ children }) => {
 
     useEffect(() => {
         const newSocket = io('http://localhost:3002', {
-            transports: ['websocket', 'polling']
+            transports: ['websocket', 'polling'],
+            query: {
+                brokerName: "admin"
+            }
         });
 
         newSocket.on('connect', () => {

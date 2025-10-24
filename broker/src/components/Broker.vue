@@ -2,7 +2,7 @@
   <div class="container">
     <header class="header">
       <button
-          class="icon"
+          class="icon logout-button"
           :style="{ backgroundImage: `url(${ buttonBgUrl })` }"
           @mouseenter="buttonBgUrl = hoverBgUrl"
           @mouseleave="buttonBgUrl = normalBgUrl"
@@ -131,7 +131,10 @@ export default {
   methods: {
     connectWebSocket() {
       this.socket = io('http://localhost:3002', {
-        transports: ['websocket', 'polling']
+        transports: ['websocket', 'polling'],
+        query: {
+          brokerName: this.brokerName
+        }
       });
 
       this.socket.on('connect', () => {

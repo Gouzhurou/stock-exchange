@@ -19,25 +19,39 @@ export class TradingGateway implements OnGatewayConnection, OnGatewayDisconnect 
     @WebSocketServer()
     server: Server;
 
-    private clients = new Map<string, Socket>();
+    private clients = new Map<string, { socket: Socket, brokerName: string }>();
 
     handleConnection(client: Socket) {
         const clientId = client.id;
-        this.clients.set(clientId, client);
-        console.log(`Client connected: ${clientId}`);
+        const brokerName = client.handshake.query.brokerName as string;
+
+        this.clients.set(clientId, {
+            socket: client,
+            brokerName: brokerName || 'Unknown Broker'
+        });
+
+        console.log(`Client connected: ${clientId}, Broker: ${brokerName}`);
         console.log(`Total clients: ${this.clients.size}`);
 
         client.emit('connected', {
             status: 'connected',
             clientId,
+            brokerName,
             message: 'Successfully connected to trading server'
         });
     }
 
     handleDisconnect(client: Socket) {
         const clientId = client.id;
-        this.clients.delete(clientId);
-        console.log(`Client disconnected: ${clientId}`);
+        const clientData = this.clients.get(clientId);
+
+        if (clientData) {
+            console.log(`Client disconnected: ${clientId}, Broker: ${clientData.brokerName}`);
+            this.clients.delete(clientId);
+        } else {
+            console.log(`Client disconnected: ${clientId}`);
+        }
+
         console.log(`Total clients: ${this.clients.size}`);
     }
 
