@@ -19,16 +19,20 @@ export class StocksService {
         return JSON.parse(data);
     }
 
-    updateStock(id: string) {
+    updateStock(id: string, stockData: any) {
         const jsonData = this.getStocks()
 
         const stockIndex = jsonData.stocks.findIndex(stock => stock.id === id);
         if (stockIndex === -1) {
-            return { success: false, errorMassage: 'Stock not found' };
+            return { success: false, errorMessage: 'Stock not found' };
         }
 
-        const selected = jsonData.stocks[stockIndex].selected;
-        jsonData.stocks[stockIndex].selected = !selected;
+        jsonData.stocks = jsonData.stocks.map(stock => ({
+            ...stock,
+            hasChartDisplay: false
+        }));
+
+        jsonData.stocks[stockIndex] = stockData;
 
         writeFileSync(this.dataPath, JSON.stringify(jsonData, null, 2), 'utf8');
 

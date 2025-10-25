@@ -118,7 +118,7 @@ function Brokers() {
 
             await fetchBrokers();
         } catch (error) {
-            console.errorMassage('Error deleting brokers:', error);
+            console.error('Error deleting brokers:', error);
         }
     }
 

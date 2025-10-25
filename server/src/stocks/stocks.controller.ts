@@ -16,7 +16,7 @@ export class StocksController {
     }
 
     @Put(':id')
-    updateStock(@Param('id') id: string) {
-        return this.stocksService.updateStock(id);
+    updateStock(@Param('id') id: string, @Body() stockData: any) {
+        return this.stocksService.updateStock(id, stockData);
     }
 }

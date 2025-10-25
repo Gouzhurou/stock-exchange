@@ -20,7 +20,7 @@ function Stocks() {
             setStocks(data.stocks || []);
         } catch (error) {
             setError(error.message);
-            console.errorMassage('Error loading stocks:', error);
+            console.error('Error loading stocks:', error);
         } finally {
             setIsLoading(false);
         }

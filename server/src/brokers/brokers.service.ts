@@ -19,7 +19,7 @@ export class BrokersService {
         const broker = jsonData.brokers.find(broker => broker.id === id);
 
         if (!broker) {
-            return { success: false, errorMassage: 'Broker not found' };
+            return { success: false, errorMessage: 'Broker not found' };
         }
 
         return broker;
@@ -71,7 +71,7 @@ export class BrokersService {
 
         const brokerIndex = jsonData.brokers.findIndex(broker => broker.id === id);
         if (brokerIndex === -1) {
-            return { success: false, errorMassage: 'Broker not found' };
+            return { success: false, errorMessage: 'Broker not found' };
         }
 
         jsonData.brokers[brokerIndex] = brokerData;

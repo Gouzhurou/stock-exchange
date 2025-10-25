@@ -3,61 +3,71 @@
     {
       "name": "Apple, Inc.",
       "id": "AAPL",
-      "selected": true,
+      "selected": false,
+      "hasChartDisplay": false,
       "count": 1
     },
     {
       "name": "Advanced Micro Devices, Inc.",
       "id": "AMD",
-      "selected": true,
+      "selected": false,
+      "hasChartDisplay": false,
       "count": 1
     },
     {
       "name": "Amazon.com, Inc.",
       "id": "AMZN",
       "selected": false,
+      "hasChartDisplay": false,
       "count": 1
     },
     {
       "name": "Cisco Systems, Inc.",
       "id": "CSCO",
       "selected": false,
+      "hasChartDisplay": false,
       "count": 1
     },
     {
       "name": "Meta Platforms, Inc.",
       "id": "META",
       "selected": false,
+      "hasChartDisplay": false,
       "count": 1
     },
     {
       "name": "Microsoft, Inc.",
       "id": "MSFT",
       "selected": false,
+      "hasChartDisplay": false,
       "count": 1
     },
     {
       "name": "Netflix, Inc.",
       "id": "NFLX",
       "selected": false,
+      "hasChartDisplay": false,
       "count": 1
     },
     {
       "name": "QUALCOMM Incorporated",
       "id": "QCOM",
       "selected": false,
+      "hasChartDisplay": false,
       "count": 1
     },
     {
       "name": "Starbucks, Inc.",
       "id": "SBUX",
       "selected": false,
+      "hasChartDisplay": false,
       "count": 1
     },
     {
       "name": "Tesla, Inc.",
       "id": "TSLA",
       "selected": false,
+      "hasChartDisplay": false,
       "count": 1
     }
   ]

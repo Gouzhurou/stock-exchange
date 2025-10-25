@@ -26,7 +26,7 @@ function Settings() {
             setStocks(data.stocks || []);
         } catch (error) {
             setError(error.message);
-            console.errorMassage('Error loading stocks:', error);
+            console.error('Error loading stocks:', error);
         } finally {
             setIsLoading(false);
         }
@@ -38,12 +38,19 @@ function Settings() {
         }
 
         try {
+            const stock = stocks.find(stock => stock.id === id);
+            const updatedStock = {
+                ...stock,
+                selected: !stock.selected,
+            };
+
             const {hostname, protocol} = window.location;
             await fetch(`${protocol}//${hostname}:3001/stocks/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                }
+                },
+                body: JSON.stringify(updatedStock),
             });
 
             setStocks(prevStocks =>
@@ -52,7 +59,7 @@ function Settings() {
                 )
             );
         } catch (error) {
-            console.errorMassage('Error updating stock selected:', error);
+            console.error('Error updating stock selected:', error);
         }
     }
 
