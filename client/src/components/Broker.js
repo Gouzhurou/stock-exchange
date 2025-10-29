@@ -97,6 +97,16 @@ class Broker extends React.Component {
                 </div>
 
                 {
+                    broker.stocks && Object.entries(broker.stocks).map(([id, stockData]) => (
+                        <div>
+                            <p class="list-item__heading">{ id }:</p>
+                            <p class="list-item__subheading">Акций: { stockData.count }</p>
+                            <p class="list-item__subheading">Стоимость: { stockData.price }</p>
+                        </div>
+                    ))
+                }
+
+                {
                     broker.isEditing && (
                         <div className="list-item__bottom">
                             <button className="button" onClick={this.handleNegativeBalanceClick}>Отжать</button>
