@@ -27,11 +27,6 @@ export class StocksService {
             return { success: false, errorMessage: 'Stock not found' };
         }
 
-        jsonData.stocks = jsonData.stocks.map(stock => ({
-            ...stock,
-            hasChartDisplay: false
-        }));
-
         jsonData.stocks[stockIndex] = stockData;
 
         writeFileSync(this.dataPath, JSON.stringify(jsonData, null, 2), 'utf8');

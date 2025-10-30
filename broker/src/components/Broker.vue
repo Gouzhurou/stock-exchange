@@ -64,7 +64,12 @@
         </div>
       </section>
 
-      <section></section>
+      <section class="chart-section">
+        <StockChart
+            :stockPrices="stocksData"
+            :isTradingActive="isTradingActive"
+        ></StockChart>
+      </section>
 
       <section class="table">
         <div class="headings table-row">
@@ -82,10 +87,14 @@
 <script>
 import StocksList from "@/components/StocksList.vue";
 import io from 'socket.io-client';
+import StockChart from "@/components/StockChart.vue";
 
 export default {
   name: 'BrokerPage',
-  components: {StocksList},
+  components: {
+    StockChart,
+    StocksList
+  },
   data() {
     return {
       socket: null,
@@ -97,6 +106,7 @@ export default {
       errorMessage: '',
       amount: null,
       isDeposit: false,
+      isTradingActive: false,
 
       normalBgUrl: '/logout.png',
       buttonBgUrl: '/logout.png',
@@ -132,7 +142,7 @@ export default {
         return '';
       }
 
-      return balance;
+      return Number(balance.toFixed(2));
     },
     stocksBalance() {
       let balance = 0;
@@ -140,18 +150,22 @@ export default {
         return balance;
       }
 
-      Object.entries(this.broker.stockCount).forEach(([stockId, quantity]) => {
-        if (this.stocksData[stockId] && quantity > 0) {
+      Object.entries(this.broker.stocks).forEach(([stockId, stockData]) => {
+        if (this.stocksData[stockId]) {
           const currentPrice = this.stocksData[stockId].currentPrice;
-          balance += currentPrice * quantity;
+          balance += currentPrice * stockData.count;
         }
       });
 
-      return balance;
+      return Number(balance.toFixed(2));
     },
     totalBalance() {
-      return this.stocksBalance + this.brokerBalance;
-    }
+      if (!this.broker) {
+        return '';
+      }
+
+      return Number((this.stocksBalance + this.brokerBalance).toFixed(2));
+    },
   },
   methods: {
     async deposit() {
@@ -341,9 +355,12 @@ export default {
     },
 
     updateTrading(data) {
+      this.isTradingActive = true;
+
       this.stocksData[data.stockId] = {
         currentPrice: data.open,
         difference: data.difference,
+        date: data.date,
       };
 
       this.date = data.date;
@@ -353,6 +370,7 @@ export default {
       this.date = null;
       this.period = null;
       this.stocksData = {};
+      this.isTradingActive = false;
     },
 
     preloadImages() {
@@ -407,6 +425,7 @@ export default {
   background-color: #fff;
   display: grid;
   grid-template-columns: 2fr 4fr 3fr;
+  gap: 24px;
 }
 .table {
   background-color: #f6f6f6;
@@ -517,5 +536,10 @@ export default {
 }
 .red-text {
   color: #ac0000;
+}
+
+.round-img {
+  border-radius: 50%;
+  object-fit: cover;
 }
 </style>

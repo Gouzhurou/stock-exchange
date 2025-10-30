@@ -25,18 +25,6 @@ export class BrokersService {
         return broker;
     }
 
-    getEmptyStockCounts() {
-        const stocks = this.stocksService.getStocks().stocks;
-        const stockIds = stocks.map(stock => stock.id);
-        const emptyStockCounts = {};
-
-        stockIds.forEach(id => {
-            emptyStockCounts[id] = 0;
-        })
-
-        return emptyStockCounts;
-    }
-
     addBroker(broker: any) {
         const jsonData = this.getBrokers();
 
@@ -46,7 +34,7 @@ export class BrokersService {
             balance: broker.balance || 0,
             selected: false,
             isEditing: false,
-            stockCount: this.getEmptyStockCounts(),
+            stocks: {},
         };
 
         jsonData.brokers.push(newBroker);

@@ -31,6 +31,7 @@
 
 <script>
 import axios from 'axios';
+
 export default {
   name: 'StocksList',
   props: {
@@ -43,12 +44,16 @@ export default {
     return {
       stocks: [],
       loading: false,
-      errorMessage: null,
-      activeStockId: null,
+      errorMessage: null
     };
   },
   mounted() {
     this.fetchStocks();
+  },
+  computed: {
+    activeStockId() {
+      return this.$store.getters.activeStockId;
+    }
   },
   methods: {
     async fetchStocks() {
@@ -60,7 +65,6 @@ export default {
         const url = `${protocol}//${hostname}:3001/stocks`;
         const response = await axios.get(url);
         this.stocks = response.data.stocks;
-        this.getActiveStockId();
       } catch (error) {
         console.error('Ошибка при получении данных:', error);
         this.errorMessage = 'Не удалось загрузить данные';
@@ -68,42 +72,11 @@ export default {
         this.loading = false;
       }
     },
-    getActiveStockId() {
-      const stock = this.stocks.find(s => s.hasChartDisplay);
-      if (stock) {
-        this.activeStockId = stock.id;
-      }
-    },
     async handleStockClick(stock) {
-      try {
-        this.errorMessage = null;
-        const hasChartDisplay = !stock.hasChartDisplay;
-
-        const updatedStock = {
-          ...stock,
-          hasChartDisplay: hasChartDisplay
-        };
-
-        const { hostname, protocol } = window.location;
-        const url = `${protocol}//${hostname}:3001/stocks/${stock.id}`;
-        const response = await axios.put(url, updatedStock);
-
-        if (response.data.success) {
-          this.stocks = this.stocks.map(stock => ({
-            ...stock,
-            hasChartDisplay: false
-          }));
-
-          const stockIndex = this.stocks.findIndex(s => s.id === stock.id);
-          if (stockIndex !== -1) {
-            this.stocks[stockIndex] = updatedStock;
-            this.activeStockId = hasChartDisplay ? stock.id : null;
-          }
-          console.log(`Chart display for stock ${stock.id} updated to: ${updatedStock.hasChartDisplay}`);
-        }
-      } catch (error) {
-        console.error('Ошибка при обновлении акции:', error);
-        this.errorMessage = 'Не удалось обновить акцию';
+      if (this.activeStockId === stock.id) {
+        this.$store.dispatch('clearActiveStockId');
+      } else {
+        this.$store.dispatch('setActiveStockId', stock.id);
       }
     },
     getImageUrl(stockId) {
@@ -132,10 +105,6 @@ export default {
 }
 .active-stock {
   box-shadow: 0 8px 15px rgba(240, 199, 0, 0.5);
-}
-.round-img {
-  border-radius: 50%;
-  object-fit: cover;
 }
 .stock__img {
   width: 32px;
