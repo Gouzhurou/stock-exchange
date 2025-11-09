@@ -68,6 +68,7 @@
         <StockChart
             :stockPrices="stocksData"
             :isTradingActive="isTradingActive"
+            :socket="socket"
         ></StockChart>
       </section>
 

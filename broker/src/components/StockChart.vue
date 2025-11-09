@@ -82,6 +82,10 @@ export default {
       type: Boolean,
       default: false
     },
+    socket: {
+      type: Object,
+      default: null
+    }
   },
   data() {
     return {
@@ -287,6 +291,16 @@ export default {
 
         if (response.status === 200) {
           this.$store.dispatch('updateBroker', updatedBroker);
+
+          this.socket.emit('purchaseStock', {
+            brokerId: this.broker.id,
+            newBalance: newBalance,
+            operation: 'buying',
+            stockId: this.activeStockId,
+            count: this.countInput,
+            totalCost: totalCost
+          })
+
           alert(`Успешно куплено ${this.countInput} акций ${this.activeStockId} по цене ${totalCost}`);
           this.countInput = null;
         } else {
@@ -345,6 +359,16 @@ export default {
 
         if (response.status === 200) {
           this.$store.dispatch('updateBroker', updatedBroker);
+
+          this.socket.emit('purchaseStock', {
+            brokerId: this.broker.id,
+            newBalance: newBalance,
+            operation: 'selling',
+            stockId: this.activeStockId,
+            count: this.countInput,
+            totalCost: totalRevenue
+          })
+
           alert(`Успешно продано ${this.countInput} акций ${this.activeStockId} по цене ${totalRevenue}`);
           this.countInput = null;
         } else {
