@@ -65,11 +65,11 @@
       </section>
 
       <section class="chart-section">
-        <StockChart
+        <StockInfo
             :stockPrices="stocksData"
             :isTradingActive="isTradingActive"
             :socket="socket"
-        ></StockChart>
+        ></StockInfo>
       </section>
 
       <section class="table">
@@ -88,12 +88,12 @@
 <script>
 import StocksList from "@/components/StocksList.vue";
 import io from 'socket.io-client';
-import StockChart from "@/components/StockChart.vue";
+import StockInfo from "@/components/StockInfo.vue";
 
 export default {
   name: 'BrokerPage',
   components: {
-    StockChart,
+    StockInfo,
     StocksList
   },
   data() {

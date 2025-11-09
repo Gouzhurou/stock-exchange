@@ -71,7 +71,7 @@
 import axios from 'axios';
 
 export default {
-  name: 'StockChart',
+  name: 'StockInfo',
   props: {
     stockPrices: {
       type: Object,
