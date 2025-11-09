@@ -77,7 +77,7 @@ class Broker extends React.Component {
     }
 
     render() {
-        const { broker } = this.props;
+        const { broker, stocksData } = this.props;
 
         return (
             <div className="list-item">
@@ -93,21 +93,38 @@ class Broker extends React.Component {
                         </div>
                     </div>
 
-                    <button id="edit-button" onClick={this.handleEditClick}></button>
+                    <button className="edit-button" onClick={this.handleEditClick}></button>
                 </div>
 
                 {
-                    broker.stocks && Object.entries(broker.stocks).map(([id, stockData]) => (
-                        <div>
-                            <p class="list-item__heading">{ id }:</p>
-                            <p class="list-item__subheading">Акций: { stockData.count }</p>
-                            <p class="list-item__subheading">Стоимость: { stockData.price }</p>
-                        </div>
-                    ))
+                    broker.stocks && Object.entries(broker.stocks).map(([stockId, stockData]) => {
+                        const currentPrice = stocksData[stockId]?.currentPrice;
+
+                        if (currentPrice) {
+                            const difference = (currentPrice * stockData.count - stockData.price).toFixed(2);
+                            const differenceText = difference >= 0 ? `+${difference}` : difference;
+
+                            return (
+                                <div key={stockId}>
+                                    <p className="list-item__heading">{stockId}:</p>
+                                    <p className="list-item__subheading">Акций: {stockData.count}</p>
+                                    <p className="list-item__subheading price">Стоимость: {currentPrice * stockData.count}</p>
+                                    <p className={difference >= 0 ? 'green-text price' : 'red-text price'}>{differenceText}</p>
+                                </div>
+                            )
+                        } else {
+                            return (
+                                <div key={stockId}>
+                                    <p className="list-item__heading">{stockId}:</p>
+                                    <p className="list-item__subheading">Акций: {stockData.count}</p>
+                                </div>
+                            )
+                        }
+                    })
                 }
 
                 {
-                    broker.isEditing && (
+                broker.isEditing && (
                         <div className="list-item__bottom">
                             <button className="button" onClick={this.handleNegativeBalanceClick}>Отжать</button>
                             <input

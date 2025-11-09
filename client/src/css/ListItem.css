@@ -31,7 +31,7 @@
     font-size: 14px;
     color: #616161;
 }
-#edit-button {
+.edit-button {
     background-image: url('../../public/edit.png');
     background-repeat: no-repeat;
     background-size: 24px 24px;
@@ -41,7 +41,7 @@
     background-color: white;
     transition: transform 0.3s ease;
 }
-#edit-button:hover {
+.edit-button:hover {
     background-image: url('../../public/hover-edit.png');
     transform: scale(1.1);
 }

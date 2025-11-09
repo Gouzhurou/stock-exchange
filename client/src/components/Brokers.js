@@ -9,33 +9,74 @@ function Brokers() {
     const [brokers, setBrokers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [stocksData, setStocksData] = useState({});
     const { socket } = useWebSocket();
 
     useEffect(() => {
+        const handleBalanceUpdate = (data) => {
+            console.log('Received balance update:', data);
+
+            setBrokers(prevBrokers =>
+                prevBrokers.map(broker =>
+                    broker.id === data.brokerId
+                        ? { ...broker, balance: data.newBalance }
+                        : broker
+                )
+            );
+        };
+
+        const handleStockPurchased = async (data) => {
+            console.log('Received stockPurchase:', data);
+            await fetchBrokers();
+        }
+
+        const handleTradingStarted = (data) => {
+            console.log('Received tradingStarted:', data.data);
+            setStocksData(prevData => ({
+                ...prevData,
+                [data.data.stockId]: {
+                    currentPrice: data.data.open
+                }
+            }));
+        };
+
+        const handlePriceUpdated = (data) => {
+            console.log('Received priceUpdated:', data.data);
+            setStocksData(prevData => ({
+                ...prevData,
+                [data.data.stockId]: {
+                    currentPrice: data.data.open
+                }
+            }));
+        };
+
+        const handleTradingStopped = () => {
+            console.log('Received tradingStopped');
+            setStocksData({});
+        };
+
         fetchBrokers();
 
         if (socket) {
             socket.on('balanceUpdated', (data) => {
                 handleBalanceUpdate(data.data);
             });
+            socket.on('stockPurchased', (data) => {
+                handleStockPurchased(data.data);
+            });
+            socket.on('tradingStarted', handleTradingStarted);
+            socket.on('priceUpdated', handlePriceUpdated);
+            socket.on('tradingStopped', handleTradingStopped);
 
             return () => {
                 socket.off('balanceUpdated');
+                socket.off('stockPurchased');
+                socket.off('tradingStarted');
+                socket.off('priceUpdated');
+                socket.off('tradingStopped');
             };
         }
-    }, [socket]);
-
-    const handleBalanceUpdate = (data) => {
-        console.log('Received balance update:', data);
-
-        setBrokers(prevBrokers =>
-            prevBrokers.map(broker =>
-                broker.id === data.brokerId
-                    ? { ...broker, balance: data.newBalance }
-                    : broker
-            )
-        );
-    };
+    }, [socket, stocksData]);
 
     const fetchBrokers = async () => {
         try {
@@ -153,6 +194,7 @@ function Brokers() {
                         <Broker
                             key={broker.id}
                             broker={broker}
+                            stocksData={stocksData}
                             onUpdate={updateBroker}
                             socket={socket}
                         />

@@ -58,7 +58,7 @@ export class TradingGateway implements OnGatewayConnection, OnGatewayDisconnect 
     // React администратор запускает торги
     @SubscribeMessage('startTrading')
     handleStartTrading(client: Socket, data: any) {
-        console.log('Trading started:', data);
+        // console.log('Trading started:', data);
 
         this.server.emit('tradingStarted', {
             type: 'TRADING_STARTED',
@@ -75,7 +75,7 @@ export class TradingGateway implements OnGatewayConnection, OnGatewayDisconnect 
     // React администратор обновляет цены
     @SubscribeMessage('priceUpdate')
     handlePriceUpdate(client: Socket, data: any) {
-        console.log('Price update:', data);
+        // console.log('Price update:', data);
 
         this.server.emit('priceUpdated', {
             type: 'PRICE_UPDATED',
@@ -109,6 +109,19 @@ export class TradingGateway implements OnGatewayConnection, OnGatewayDisconnect 
                 ...data,
                 updatedBy: clientData?.brokerName
             }
+        })
+    }
+
+    @SubscribeMessage('purchaseStock')
+    handleStockTransaction(client: Socket, data: any) {
+        const clientId = client.id;
+        const clientData = this.clients.get(clientId);
+
+        console.log(`${clientData?.brokerName} made stock transaction`, data);
+
+        this.server.emit('stockPurchased', {
+            type: 'STOCK_PURCHASED',
+            data: data
         })
     }
 
