@@ -11,15 +11,21 @@
           <p class="grey-text">{{ currentStockInfo.id }}</p>
         </div>
       </div>
-      <div v-if="currentStockData" class="intro-container__content">
+      <div v-if="activeStockLastData" class="intro-container__content">
         <p class="text price right-text">{{ currentPrice }}</p>
         <p
             class="text right-text"
-            :class="currentStockData.difference ?
-            (currentStockData.difference >= 0 ? 'green-text price' : 'red-text price') :
+            :class="activeStockLastData.difference ?
+            (activeStockLastData.difference >= 0 ? 'green-text price' : 'red-text price') :
             ''"
-        >{{ currentStockData.difference }}</p>
+        >{{ activeStockLastData.difference }}</p>
       </div>
+    </div>
+
+    <div>
+      <StockChart
+        :priceHistory="activeStockData"
+      />
     </div>
 
     <div class="sb-container">
@@ -31,7 +37,7 @@
         <p class="text right-text">Общая стоимость</p>
         <div>
           <p class="text right-text price">{{ currentStockTotalPrice }}</p>
-          <p v-if="currentStockData && currentStockCount"
+          <p v-if="activeStockLastData && currentStockCount"
              class="text right-text price"
              :class="totalDifference >= 0 ? 'green-text' : 'red-text' "
           >{{ totalDifference }}</p>
@@ -69,9 +75,13 @@
 
 <script>
 import axios from 'axios';
+import StockChart from "@/components/StockChart.vue";
 
 export default {
   name: 'StockInfo',
+  components: {
+    StockChart
+  },
   props: {
     stockPrices: {
       type: Object,
@@ -116,7 +126,7 @@ export default {
       }
       return this.priceHistory[this.activeStockId];
     },
-    currentStockData() {
+    activeStockLastData() {
       if (!this.activeStockId || !this.activeStockData || this.activeStockData.length === 0) {
         return;
       }
@@ -124,8 +134,8 @@ export default {
       return this.activeStockData[this.activeStockData.length - 1];
     },
     currentPrice() {
-      if (this.currentStockData) {
-        return this.currentStockData.currentPrice;
+      if (this.activeStockLastData) {
+        return this.activeStockLastData.currentPrice;
       }
       return null;
     },
